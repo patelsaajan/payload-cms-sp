@@ -55,6 +55,9 @@ RUN adduser --system --uid 1001 nextjs
 RUN mkdir .next
 RUN chown nextjs:nodejs .next
 
+# Copy full node_modules from builder (includes Payload CLI for migrations)
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
+
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
@@ -64,9 +67,6 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/src ./src
 COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
 COPY --from=builder --chown=nextjs:nodejs /app/docker-entrypoint.sh ./docker-entrypoint.sh
-
-# Install payload CLI for migrations using npm (simpler than pnpm in runner stage)
-RUN npm install --omit=dev --no-save payload@3.62.0
 
 # Make entrypoint executable
 RUN chmod +x ./docker-entrypoint.sh
