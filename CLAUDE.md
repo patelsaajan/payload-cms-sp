@@ -66,6 +66,38 @@ pnpm run generate:importmap
 
 Generated types are written to `src/payload-types.ts`. Run `generate:types` after modifying collection schemas.
 
+## Database Migrations
+
+```bash
+# Run pending migrations
+pnpm run migrate
+
+# Check migration status
+pnpm run migrate:status
+
+# Create a new migration file
+pnpm run migrate:create
+```
+
+**Important Migration Behavior:**
+
+- **Development Mode**: Payload automatically syncs schema changes to the database on startup (auto-push mode). No manual migration needed.
+- **Production Mode**: Migrations must be run explicitly. The Dockerfile is configured to run migrations automatically on deployment.
+
+**Migration Workflow:**
+
+1. Modify collection schemas in `src/collections/`
+2. In development, changes apply automatically
+3. For production deployment, create a migration: `pnpm run migrate:create`
+4. Commit the migration file in `src/migrations/`
+5. Deploy - migrations run automatically via `docker-entrypoint.sh`
+
+**Railway Deployment:**
+
+- Migrations run automatically on container startup via the entrypoint script
+- The database schema will be initialized on first deployment
+- Environment variable `NODE_ENV=production` must be set in Railway
+
 ## Architecture
 
 ### Payload Configuration
