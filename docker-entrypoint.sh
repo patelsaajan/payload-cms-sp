@@ -2,7 +2,7 @@
 set -e
 
 echo "Running database migrations..."
-node_modules/.bin/payload migrate --no-color || {
+node node_modules/.bin/payload migrate --no-color || {
   echo "Migration failed, but continuing startup..."
 }
 
