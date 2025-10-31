@@ -63,12 +63,10 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 # Copy source files needed for migrations
 COPY --from=builder --chown=nextjs:nodejs /app/src ./src
 COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
-COPY --from=builder --chown=nextjs:nodejs /app/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=builder --chown=nextjs:nodejs /app/docker-entrypoint.sh ./docker-entrypoint.sh
 
-# Install pnpm and payload CLI for migrations
-RUN corepack enable pnpm && \
-    pnpm add payload@3.62.0 --prod --ignore-scripts
+# Install payload CLI for migrations using npm (simpler than pnpm in runner stage)
+RUN npm install --omit=dev --no-save payload@3.62.0
 
 # Make entrypoint executable
 RUN chmod +x ./docker-entrypoint.sh
