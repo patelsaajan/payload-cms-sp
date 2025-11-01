@@ -12,6 +12,7 @@ import { Categories } from './collections/Categories'
 import { Users } from './collections/Users/index'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
+import { Posts } from './collections/Posts'
 import { Branding } from './Branding/config'
 import { Header } from './Header/config'
 
@@ -28,7 +29,7 @@ export default buildConfig({
   routes: {
     admin: '/portal',
   },
-  collections: [Pages, Categories, Users, Media],
+  collections: [Pages, Posts, Categories, Users, Media],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
