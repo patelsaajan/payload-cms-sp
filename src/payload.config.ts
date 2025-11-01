@@ -8,9 +8,12 @@ import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 
-import { Users } from './collections/Users'
+import { Categories } from './collections/Categories'
+import { Users } from './collections/Users/index'
 import { Media } from './collections/Media'
+import { Pages } from './collections/Pages'
 import { Branding } from './Branding/config'
+import { Header } from './Header/config'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -22,7 +25,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media],
+  collections: [Pages, Categories, Users, Media],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
@@ -35,7 +38,7 @@ export default buildConfig({
     migrationDir: path.resolve(dirname, 'migrations'),
   }),
   sharp,
-  globals: [ThemeSettings, Branding],
+  globals: [Header, ThemeSettings, Branding],
   plugins: [
     payloadCloudPlugin(),
     // storage-adapter-placeholder
