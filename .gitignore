@@ -51,3 +51,6 @@ node_modules/
 
 # Ignore Bun
 bun.lock
+
+# Ignore Public
+public/*
