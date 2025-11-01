@@ -10,6 +10,7 @@ import sharp from 'sharp'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
+import { Branding } from './Branding/config'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -34,7 +35,7 @@ export default buildConfig({
     migrationDir: path.resolve(dirname, 'migrations'),
   }),
   sharp,
-  globals: [ThemeSettings],
+  globals: [ThemeSettings, Branding],
   plugins: [
     payloadCloudPlugin(),
     // storage-adapter-placeholder
