@@ -25,6 +25,9 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
+  routes: {
+    admin: '/portal',
+  },
   collections: [Pages, Categories, Users, Media],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
