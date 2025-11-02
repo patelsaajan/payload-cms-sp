@@ -11,7 +11,6 @@ import {
 
 import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
-import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { populateAuthors } from './hooks/populateAuthors'
 import { revalidateDelete, revalidatePost } from './hooks/revalidatePost'
 
@@ -69,13 +68,27 @@ export const Posts: CollectionConfig<'posts'> = {
               type: 'richText',
               editor: lexicalEditor({
                 features: ({ rootFeatures }) => {
+                  const removedBlocks = [
+                    'relationship',
+                    'blockquote',
+                    'horizontalRule',
+                    'checklist',
+                    'check',
+                  ]
+                  const filteredFeatures = rootFeatures.filter((feature) => {
+                    // Check if feature has a key property that indicates it's a relationship feature
+                    if (feature && typeof feature === 'object' && 'key' in feature) {
+                      return !removedBlocks.includes(feature.key)
+                    }
+                    return true
+                  })
                   return [
-                    ...rootFeatures,
+                    ...filteredFeatures,
                     HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
-                    BlocksFeature({ blocks: [MediaBlock] }),
-                    FixedToolbarFeature(),
-                    InlineToolbarFeature(),
-                    HorizontalRuleFeature(),
+                    BlocksFeature({ blocks: [] }),
+                    // FixedToolbarFeature(),
+                    // InlineToolbarFeature(),
+                    // HorizontalRuleFeature(),
                   ]
                 },
               }),
