@@ -13,6 +13,7 @@ import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { populateAuthors } from './hooks/populateAuthors'
 import { revalidateDelete, revalidatePost } from './hooks/revalidatePost'
+import { ButtonBlock } from '../../blocks/ButtonBlock/config'
 
 import {
   MetaDescriptionField,
@@ -85,7 +86,7 @@ export const Posts: CollectionConfig<'posts'> = {
                   return [
                     ...filteredFeatures,
                     HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
-                    BlocksFeature({ blocks: [] }),
+                    BlocksFeature({ blocks: [ButtonBlock] }),
                     // FixedToolbarFeature(),
                     // InlineToolbarFeature(),
                     // HorizontalRuleFeature(),

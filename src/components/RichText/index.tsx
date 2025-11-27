@@ -1,4 +1,5 @@
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
+import { ButtonBlock } from '@/blocks/ButtonBlock/Component'
 import {
   DefaultNodeTypes,
   SerializedBlockNode,
@@ -11,11 +12,11 @@ import {
   RichText as ConvertRichText,
 } from '@payloadcms/richtext-lexical/react'
 
-import type { MediaBlock as MediaBlockProps } from '@/payload-types'
+import type { MediaBlock as MediaBlockProps, ButtonBlock as ButtonBlockProps } from '@/payload-types'
 
 import { cn } from '@/utilities/ui'
 
-type NodeTypes = DefaultNodeTypes | SerializedBlockNode<MediaBlockProps>
+type NodeTypes = DefaultNodeTypes | SerializedBlockNode<MediaBlockProps> | SerializedBlockNode<ButtonBlockProps>
 
 const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
   const { value, relationTo } = linkNode.fields.doc!
@@ -39,6 +40,9 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
         enableGutter={false}
         disableInnerContainer={true}
       />
+    ),
+    buttonBlock: ({ node }: { node: SerializedBlockNode<ButtonBlockProps> }) => (
+      <ButtonBlock {...node.fields} />
     ),
   },
 })
