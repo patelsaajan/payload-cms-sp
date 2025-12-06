@@ -58,7 +58,10 @@ export default buildConfig({
       ? [
           s3Storage({
             collections: {
-              media: true,
+              media: {
+                // Disable client-side uploads to avoid import map issues
+                disablePayloadAccessControl: true,
+              },
             },
             bucket: process.env.R2_BUCKET_NAME!,
             config: {
