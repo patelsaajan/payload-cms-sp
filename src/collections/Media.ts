@@ -40,6 +40,8 @@ export const Media: CollectionConfig = {
   ],
   upload: {
     // Upload to the public/media directory in Next.js making them publicly accessible even outside of Payload
+    // Note: When R2 storage is configured (production), files will be stored in R2 instead of this local directory
+    // This staticDir is only used in development when R2 credentials are not set
     staticDir: path.resolve(dirname, '../../public/media'),
     adminThumbnail: 'thumbnail',
     focalPoint: true,
