@@ -59,7 +59,6 @@ export default buildConfig({
           s3Storage({
             collections: {
               media: {
-                // Disable client-side uploads to avoid import map issues
                 disablePayloadAccessControl: true,
               },
             },
@@ -72,6 +71,8 @@ export default buildConfig({
               region: 'auto',
               endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
             },
+            // Disable client-side uploads to avoid import map issues
+            clientUploads: false,
           }),
         ]
       : []),
