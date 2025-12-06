@@ -47,28 +47,21 @@ export default buildConfig({
   plugins: [
     payloadCloudPlugin(),
     // storage-adapter-placeholder
-    // Conditionally add s3Storage only when R2 environment variables are present
-    ...(process.env.R2_BUCKET &&
-    process.env.R2_ACCESS_KEY &&
-    process.env.R2_SECRET_KEY &&
-    process.env.R2_ENDPOINT
-      ? [
-          s3Storage({
-            collections: {
-              media: true,
-            },
-            bucket: process.env.R2_BUCKET,
-            config: {
-              credentials: {
-                accessKeyId: process.env.R2_ACCESS_KEY,
-                secretAccessKey: process.env.R2_SECRET_KEY,
-              },
-              region: 'auto',
-              endpoint: process.env.R2_ENDPOINT,
-            },
-          }),
-        ]
-      : []),
+    s3Storage({
+      enabled: !!process.env.R2_SECRET_KEY,
+      collections: {
+        media: true,
+      },
+      bucket: process.env.R2_BUCKET || '',
+      config: {
+        credentials: {
+          accessKeyId: process.env.R2_ACCESS_KEY || '',
+          secretAccessKey: process.env.R2_SECRET_KEY || '',
+        },
+        region: 'auto',
+        endpoint: process.env.R2_ENDPOINT,
+      },
+    }),
   ],
   cors: [
     process.env.PAYLOAD_URL || 'http://localhost:3000',
