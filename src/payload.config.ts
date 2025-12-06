@@ -33,14 +33,6 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
-    autoLogin:
-      process.env.NODE_ENV === 'development'
-        ? {
-            email: 'saajanpatel@hotmail.com',
-            password: 'Password123!',
-            prefillOnly: true,
-          }
-        : false,
   },
   routes: {
     admin: '/portal',
