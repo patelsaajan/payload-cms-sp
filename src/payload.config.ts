@@ -66,5 +66,6 @@ export default buildConfig({
   cors: [
     process.env.PAYLOAD_URL || 'http://localhost:3000',
     process.env.FRONTEND_URL || 'http://localhost:4000',
+    'http://localhost:4001', // Preview mode
   ].filter(Boolean),
 })
