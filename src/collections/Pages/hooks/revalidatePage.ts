@@ -3,8 +3,9 @@ import type { CollectionAfterChangeHook, CollectionAfterDeleteHook } from 'paylo
 import { revalidatePath, revalidateTag } from 'next/cache'
 
 import type { Page } from '../../../payload-types'
+import { purgeFrontendCache } from '../../../utilities/purgeFrontendCache'
 
-export const revalidatePage: CollectionAfterChangeHook<Page> = ({
+export const revalidatePage: CollectionAfterChangeHook<Page> = async ({
   doc,
   previousDoc,
   req: { payload, context },
@@ -17,6 +18,13 @@ export const revalidatePage: CollectionAfterChangeHook<Page> = ({
 
       revalidatePath(path)
       revalidateTag('pages-sitemap')
+
+      // Purge Nuxt frontend cache
+      // Cache key is always page-{slug}, including page-home for homepage
+      await purgeFrontendCache({
+        keys: [`page-${doc.slug}`],
+        payload,
+      })
     }
 
     // If the page was previously published, we need to revalidate the old path
@@ -27,16 +35,45 @@ export const revalidatePage: CollectionAfterChangeHook<Page> = ({
 
       revalidatePath(oldPath)
       revalidateTag('pages-sitemap')
+
+      // Purge old page from Nuxt frontend cache
+      await purgeFrontendCache({
+        keys: [`page-${previousDoc.slug}`],
+        payload,
+      })
+    }
+
+    // If slug changed, also purge the old slug
+    if (
+      previousDoc?.slug &&
+      doc.slug !== previousDoc.slug &&
+      previousDoc._status === 'published'
+    ) {
+      payload.logger.info(`Slug changed from ${previousDoc.slug} to ${doc.slug}, purging old slug`)
+
+      await purgeFrontendCache({
+        keys: [`page-${previousDoc.slug}`],
+        payload,
+      })
     }
   }
   return doc
 }
 
-export const revalidateDelete: CollectionAfterDeleteHook<Page> = ({ doc, req: { context } }) => {
+export const revalidateDelete: CollectionAfterDeleteHook<Page> = async ({
+  doc,
+  req: { payload, context },
+}) => {
   if (!context.disableRevalidate) {
     const path = doc?.slug === 'home' ? '/' : `/${doc?.slug}`
     revalidatePath(path)
     revalidateTag('pages-sitemap')
+
+    // Purge Nuxt frontend cache
+    await purgeFrontendCache({
+      keys: [`page-${doc.slug}`],
+      payload,
+    })
   }
 
   return doc
