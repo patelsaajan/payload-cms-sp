@@ -12,15 +12,11 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
 }) => {
   const { payload, context } = req
 
-  // Debug: Log to identify autosave operations
-  payload.logger.info(`Hook triggered - Status: ${doc._status}, Query: ${JSON.stringify(req.query)}`)
-
-  // Skip if this is an autosave operation (check query params or draft status)
+  // Skip autosaves and drafts to avoid unnecessary cache purges
   const isAutosave = req.query?.autosave === 'true' || req.query?.draft === 'true'
   const isDraft = doc._status === 'draft'
 
   if (isAutosave || isDraft) {
-    payload.logger.info('Skipping cache purge - autosave or draft')
     return doc
   }
 
@@ -39,8 +35,6 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
     if (doc._status === 'published' && (isNewlyPublished || (wasAlreadyPublished && contentChanged))) {
       const path = `/posts/${doc.slug}`
 
-      payload.logger.info(`Revalidating post at path: ${path}`)
-
       revalidatePath(path)
       revalidateTag('posts-sitemap')
 
@@ -55,8 +49,6 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
     // If the post was previously published, we need to revalidate the old path
     if (previousDoc._status === 'published' && doc._status !== 'published') {
       const oldPath = `/posts/${previousDoc.slug}`
-
-      payload.logger.info(`Revalidating old post at path: ${oldPath}`)
 
       revalidatePath(oldPath)
       revalidateTag('posts-sitemap')
@@ -75,8 +67,6 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
       doc.slug !== previousDoc.slug &&
       previousDoc._status === 'published'
     ) {
-      payload.logger.info(`Slug changed from ${previousDoc.slug} to ${doc.slug}, purging old slug`)
-
       await purgeFrontendCache({
         keys: [`post-${previousDoc.slug}`],
         payload,

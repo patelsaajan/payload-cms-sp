@@ -9,8 +9,6 @@ export const revalidateHeader: GlobalAfterChangeHook = async ({
   req: { payload, context },
 }) => {
   if (!context.disableRevalidate) {
-    payload.logger.info(`Revalidating header`)
-
     revalidateTag('global_header')
 
     // Purge Nuxt frontend cache (aggressive: all pages and posts since header appears everywhere)

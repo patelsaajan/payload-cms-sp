@@ -9,8 +9,6 @@ export const revalidateBranding: GlobalAfterChangeHook = async ({
   req: { payload, context },
 }) => {
   if (!context.disableRevalidate) {
-    payload.logger.info(`Revalidating branding settings`)
-
     revalidateTag('global_branding')
 
     // Purge Nuxt frontend cache (aggressive: all pages and posts since branding appears everywhere)

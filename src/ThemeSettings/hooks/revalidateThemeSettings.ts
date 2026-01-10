@@ -9,8 +9,6 @@ export const revalidateThemeSettings: GlobalAfterChangeHook = async ({
   req: { payload, context },
 }) => {
   if (!context.disableRevalidate) {
-    payload.logger.info(`Revalidating theme settings`)
-
     revalidateTag('global_theme-settings')
 
     // Purge Nuxt frontend cache (aggressive: all pages and posts since theme appears everywhere)

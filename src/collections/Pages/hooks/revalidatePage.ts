@@ -35,13 +35,10 @@ export const revalidatePage: CollectionAfterChangeHook<Page> = async ({
     if (doc._status === 'published' && (isNewlyPublished || (wasAlreadyPublished && contentChanged))) {
       const path = doc.slug === 'home' ? '/' : `/${doc.slug}`
 
-      payload.logger.info(`Revalidating page at path: ${path}`)
-
       revalidatePath(path)
       revalidateTag('pages-sitemap')
 
       // Purge Nuxt frontend cache
-      // Cache key is always page-{slug}, including page-home for homepage
       await purgeFrontendCache({
         keys: [`page-${doc.slug}`],
         payload,
@@ -51,8 +48,6 @@ export const revalidatePage: CollectionAfterChangeHook<Page> = async ({
     // If the page was previously published, we need to revalidate the old path
     if (previousDoc?._status === 'published' && doc._status !== 'published') {
       const oldPath = previousDoc.slug === 'home' ? '/' : `/${previousDoc.slug}`
-
-      payload.logger.info(`Revalidating old page at path: ${oldPath}`)
 
       revalidatePath(oldPath)
       revalidateTag('pages-sitemap')
@@ -70,8 +65,6 @@ export const revalidatePage: CollectionAfterChangeHook<Page> = async ({
       doc.slug !== previousDoc.slug &&
       previousDoc._status === 'published'
     ) {
-      payload.logger.info(`Slug changed from ${previousDoc.slug} to ${doc.slug}, purging old slug`)
-
       await purgeFrontendCache({
         keys: [`page-${previousDoc.slug}`],
         payload,

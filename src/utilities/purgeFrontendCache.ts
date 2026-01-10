@@ -32,22 +32,15 @@ export async function purgeFrontendCache(options: PurgeCacheOptions): Promise<bo
 
   // Skip if not configured (e.g., in development or if feature disabled)
   if (!purgeUrl || !purgeSecret) {
-    payload.logger.info(
-      'Frontend cache purge skipped: FRONTEND_CACHE_PURGE_URL or FRONTEND_CACHE_PURGE_SECRET not configured',
-    )
     return true // Return true to not block operations
   }
 
   // Validate input
   if (!keys && !patterns) {
-    payload.logger.warn('Frontend cache purge: No keys or patterns provided')
     return false
   }
 
   try {
-    payload.logger.info(
-      `Purging frontend cache - Keys: ${keys?.join(', ') || 'none'}, Patterns: ${patterns?.join(', ') || 'none'}`,
-    )
 
     // Create abort controller for timeout
     const controller = new AbortController()
@@ -76,14 +69,8 @@ export async function purgeFrontendCache(options: PurgeCacheOptions): Promise<bo
 
     const result: PurgeCacheResponse = await response.json()
 
-    if (result.success) {
-      payload.logger.info(
-        `Frontend cache purge successful: ${result.purged.length} keys purged - ${result.purged.join(', ')}`,
-      )
-    } else {
-      payload.logger.warn(
-        `Frontend cache purge partially failed: ${result.purged.length} purged, ${result.failed.length} failed`,
-      )
+    if (result.purged.length > 0) {
+      payload.logger.info(`Cache purged: ${result.purged.join(', ')}`)
     }
 
     return result.success
