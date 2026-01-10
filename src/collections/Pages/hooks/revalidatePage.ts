@@ -8,10 +8,31 @@ import { purgeFrontendCache } from '../../../utilities/purgeFrontendCache'
 export const revalidatePage: CollectionAfterChangeHook<Page> = async ({
   doc,
   previousDoc,
-  req: { payload, context },
+  req,
 }) => {
+  const { payload, context } = req
+
+  // Skip if this is an autosave operation or draft
+  const isAutosave = req.query?.autosave === 'true' || req.query?.draft === 'true'
+  const isDraft = doc._status === 'draft'
+
+  if (isAutosave || isDraft) {
+    return doc
+  }
+
   if (!context.disableRevalidate) {
-    if (doc._status === 'published') {
+    // Only purge cache on actual publish actions, not autosaves
+    const isNewlyPublished = previousDoc?._status !== 'published' && doc._status === 'published'
+    const wasAlreadyPublished = previousDoc?._status === 'published' && doc._status === 'published'
+
+    // Check if content actually changed (not just autosave)
+    const contentChanged = previousDoc && (
+      previousDoc.title !== doc.title ||
+      previousDoc.slug !== doc.slug ||
+      JSON.stringify(previousDoc.layout) !== JSON.stringify(doc.layout)
+    )
+
+    if (doc._status === 'published' && (isNewlyPublished || (wasAlreadyPublished && contentChanged))) {
       const path = doc.slug === 'home' ? '/' : `/${doc.slug}`
 
       payload.logger.info(`Revalidating page at path: ${path}`)

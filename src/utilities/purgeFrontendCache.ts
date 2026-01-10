@@ -49,11 +49,6 @@ export async function purgeFrontendCache(options: PurgeCacheOptions): Promise<bo
       `Purging frontend cache - Keys: ${keys?.join(', ') || 'none'}, Patterns: ${patterns?.join(', ') || 'none'}`,
     )
 
-    // Debug logging
-    payload.logger.info(`Cache purge URL: ${purgeUrl}`)
-    payload.logger.info(`Cache purge secret length: ${purgeSecret?.length}`)
-    payload.logger.info(`Cache purge secret: ${purgeSecret?.substring(0, 10)}...`)
-
     // Create abort controller for timeout
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 5000) // 5 second timeout

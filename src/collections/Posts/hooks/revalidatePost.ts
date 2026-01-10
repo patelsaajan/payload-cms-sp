@@ -8,10 +8,35 @@ import { purgeFrontendCache } from '../../../utilities/purgeFrontendCache'
 export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
   doc,
   previousDoc,
-  req: { payload, context },
+  req,
 }) => {
+  const { payload, context } = req
+
+  // Debug: Log to identify autosave operations
+  payload.logger.info(`Hook triggered - Status: ${doc._status}, Query: ${JSON.stringify(req.query)}`)
+
+  // Skip if this is an autosave operation (check query params or draft status)
+  const isAutosave = req.query?.autosave === 'true' || req.query?.draft === 'true'
+  const isDraft = doc._status === 'draft'
+
+  if (isAutosave || isDraft) {
+    payload.logger.info('Skipping cache purge - autosave or draft')
+    return doc
+  }
+
   if (!context.disableRevalidate) {
-    if (doc._status === 'published') {
+    // Only purge cache on actual publish actions
+    const isNewlyPublished = previousDoc?._status !== 'published' && doc._status === 'published'
+    const wasAlreadyPublished = previousDoc?._status === 'published' && doc._status === 'published'
+
+    // Check if content actually changed
+    const contentChanged = previousDoc && (
+      previousDoc.title !== doc.title ||
+      previousDoc.slug !== doc.slug ||
+      JSON.stringify(previousDoc.content) !== JSON.stringify(doc.content)
+    )
+
+    if (doc._status === 'published' && (isNewlyPublished || (wasAlreadyPublished && contentChanged))) {
       const path = `/posts/${doc.slug}`
 
       payload.logger.info(`Revalidating post at path: ${path}`)
