@@ -14,14 +14,17 @@ interface PurgeCacheResponse {
 }
 
 /**
- * Purges cache entries on the Nuxt frontend
- * Calls the Nuxt cache purge API endpoint with authentication
+ * Notifies the Nuxt frontend about content updates
  *
- * @param options - Cache purge options
- * @param options.keys - Exact cache keys to purge (e.g., ['page-home', 'post-my-article'])
- * @param options.patterns - Glob patterns to match cache keys (e.g., ['posts-*', 'page-*'])
+ * NOTE: This does NOT immediately purge Vercel's edge cache.
+ * The cache expires naturally based on Cache-Control headers (1 hour).
+ * This function provides logging/visibility and maintains the update notification flow.
+ *
+ * @param options - Cache notification options
+ * @param options.keys - Content that was updated (e.g., ['page-home', 'post-my-article'])
+ * @param options.patterns - Patterns for bulk updates (e.g., ['posts-*'])
  * @param options.payload - Payload instance for logging
- * @returns Promise<boolean> - true if purge was successful, false otherwise
+ * @returns Promise<boolean> - true if notification was successful, false otherwise
  */
 export async function purgeFrontendCache(options: PurgeCacheOptions): Promise<boolean> {
   const { keys, patterns, payload } = options
@@ -62,7 +65,7 @@ export async function purgeFrontendCache(options: PurgeCacheOptions): Promise<bo
     if (!response.ok) {
       const errorText = await response.text()
       payload.logger.error(
-        `Frontend cache purge failed: ${response.status} ${response.statusText} - ${errorText}`,
+        `Frontend cache notification failed: ${response.status} ${response.statusText} - ${errorText}`,
       )
       return false
     }
@@ -70,20 +73,20 @@ export async function purgeFrontendCache(options: PurgeCacheOptions): Promise<bo
     const result: PurgeCacheResponse = await response.json()
 
     if (result.purged.length > 0) {
-      payload.logger.info(`Cache purged: ${result.purged.join(', ')}`)
+      payload.logger.info(`Content update notification sent: ${result.purged.join(', ')} (cache expires naturally in 1 hour)`)
     }
 
     return result.success
   } catch (error) {
-    // Log error but don't throw - we don't want cache purge failures to break content operations
+    // Log error but don't throw - we don't want notification failures to break content operations
     if (error instanceof Error) {
       if (error.name === 'AbortError') {
-        payload.logger.error('Frontend cache purge timeout after 5 seconds')
+        payload.logger.error('Frontend cache notification timeout after 5 seconds')
       } else {
-        payload.logger.error(`Frontend cache purge error: ${error.message}`)
+        payload.logger.error(`Frontend cache notification error: ${error.message}`)
       }
     } else {
-      payload.logger.error(`Frontend cache purge error: ${String(error)}`)
+      payload.logger.error(`Frontend cache notification error: ${String(error)}`)
     }
 
     return false
