@@ -17,7 +17,7 @@ interface PurgeCacheResponse {
  * Notifies the Nuxt frontend about content updates
  *
  * NOTE: This does NOT immediately purge Vercel's edge cache.
- * The cache expires naturally based on Cache-Control headers (1 hour).
+ * The cache expires naturally based on Cache-Control headers (20 minutes).
  * This function provides logging/visibility and maintains the update notification flow.
  *
  * @param options - Cache notification options
@@ -73,7 +73,7 @@ export async function purgeFrontendCache(options: PurgeCacheOptions): Promise<bo
     const result: PurgeCacheResponse = await response.json()
 
     if (result.purged.length > 0) {
-      payload.logger.info(`Content update notification sent: ${result.purged.join(', ')} (cache expires naturally in 1 hour)`)
+      payload.logger.info(`Content update notification sent: ${result.purged.join(', ')} (cache expires naturally in 20 minutes)`)
     }
 
     return result.success
