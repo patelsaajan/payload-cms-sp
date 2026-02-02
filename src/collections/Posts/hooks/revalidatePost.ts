@@ -3,14 +3,13 @@ import type { CollectionAfterChangeHook, CollectionAfterDeleteHook } from 'paylo
 import { revalidatePath, revalidateTag } from 'next/cache'
 
 import type { Post } from '../../../payload-types'
-import { purgeFrontendCache } from '../../../utilities/purgeFrontendCache'
 
 export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
   doc,
   previousDoc,
   req,
 }) => {
-  const { payload, context } = req
+  const { context } = req
 
   // Skip autosaves and drafts to avoid unnecessary cache purges
   const isAutosave = req.query?.autosave === 'true' || req.query?.draft === 'true'
@@ -37,13 +36,6 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
 
       revalidatePath(path)
       revalidateTag('posts-sitemap')
-
-      // Purge Nuxt frontend cache
-      await purgeFrontendCache({
-        keys: [`post-${doc.slug}`],
-        patterns: ['posts-*'], // Invalidate all post lists (blog index + pagination)
-        payload,
-      })
     }
 
     // If the post was previously published, we need to revalidate the old path
@@ -52,25 +44,6 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
 
       revalidatePath(oldPath)
       revalidateTag('posts-sitemap')
-
-      // Purge old post from Nuxt frontend cache
-      await purgeFrontendCache({
-        keys: [`post-${previousDoc.slug}`],
-        patterns: ['posts-*'],
-        payload,
-      })
-    }
-
-    // If slug changed, also purge the old slug
-    if (
-      previousDoc?.slug &&
-      doc.slug !== previousDoc.slug &&
-      previousDoc._status === 'published'
-    ) {
-      await purgeFrontendCache({
-        keys: [`post-${previousDoc.slug}`],
-        payload,
-      })
     }
   }
   return doc
@@ -78,20 +51,13 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
 
 export const revalidateDelete: CollectionAfterDeleteHook<Post> = async ({
   doc,
-  req: { payload, context },
+  req: { context },
 }) => {
   if (!context.disableRevalidate) {
     const path = `/posts/${doc?.slug}`
 
     revalidatePath(path)
     revalidateTag('posts-sitemap')
-
-    // Purge Nuxt frontend cache
-    await purgeFrontendCache({
-      keys: [`post-${doc.slug}`],
-      patterns: ['posts-*'],
-      payload,
-    })
   }
 
   return doc

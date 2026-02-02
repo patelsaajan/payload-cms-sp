@@ -98,11 +98,13 @@ export interface Config {
     header: Header;
     'theme-settings': ThemeSetting;
     'branding-settings': BrandingSetting;
+    redeploy: Redeploy;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     'theme-settings': ThemeSettingsSelect<false> | ThemeSettingsSelect<true>;
     'branding-settings': BrandingSettingsSelect<false> | BrandingSettingsSelect<true>;
+    redeploy: RedeploySelect<false> | RedeploySelect<true>;
   };
   locale: null;
   user: User & {
@@ -1056,6 +1058,15 @@ export interface BrandingSetting {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "redeploy".
+ */
+export interface Redeploy {
+  id: number;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
@@ -1108,6 +1119,15 @@ export interface BrandingSettingsSelect<T extends boolean = true> {
         url?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "redeploy_select".
+ */
+export interface RedeploySelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

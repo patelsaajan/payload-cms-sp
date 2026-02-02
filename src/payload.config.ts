@@ -3,6 +3,7 @@ import { postgresAdapter } from '@payloadcms/db-postgres'
 import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { ThemeSettings } from './ThemeSettings/config'
+import { Redeploy } from './redploy/config'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
@@ -43,7 +44,7 @@ export default buildConfig({
     migrationDir: path.resolve(dirname, 'migrations'),
   }),
   sharp,
-  globals: [Header, ThemeSettings, Branding],
+  globals: [Header, ThemeSettings, Branding, Redeploy],
   plugins: [
     payloadCloudPlugin(),
     // storage-adapter-placeholder
