@@ -6,6 +6,15 @@ const COOLDOWN_MS = COOLDOWN_MINUTES * 60 * 1000
 const LOCAL_STORAGE_KEY = 'redeploymentData'
 const REDEPLOY_LIMIT = 3
 
+interface RedeployResponse {
+  job?: {
+    id: string
+    state: string
+    createdAt: number
+  }
+  error?: string
+}
+
 const formatTime = (seconds: number): string => {
   const hours = Math.floor(seconds / 3600)
   const mins = Math.floor(seconds / 60) - hours * 60
@@ -18,6 +27,8 @@ const formatTime = (seconds: number): string => {
 export const RedeploymentButton = () => {
   const [remainingSeconds, setRemainingSeconds] = useState(0)
   const [deployCount, setDeployCount] = useState(0)
+  const [isLoading, setIsLoading] = useState(false)
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
   useEffect(() => {
     const checkCooldown = () => {
@@ -76,21 +87,57 @@ export const RedeploymentButton = () => {
 
   const isEnabled = remainingSeconds === 0
 
-  const onClick = () => {
-    alert('Redeployment triggered!')
-    const newCount = deployCount + 1
-    const timestamp = Date.now()
-    setDeployCount(newCount)
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ timestamp, deploys: newCount }))
+  const onClick = async () => {
+    if (!isEnabled || isLoading) return
 
-    // If this deploy hits the limit, block until midnight
-    if (newCount >= REDEPLOY_LIMIT) {
-      const remainingSecondsInDay = Math.ceil(
-        (new Date().setHours(24, 0, 0, 0) - Date.now()) / 1000,
-      )
-      setRemainingSeconds(remainingSecondsInDay)
-    } else {
-      setRemainingSeconds(COOLDOWN_MINUTES * 60)
+    setIsLoading(true)
+    setMessage(null)
+
+    try {
+      const response = await fetch('/api/redeploy', {
+        method: 'POST',
+      })
+
+      const data: RedeployResponse = await response.json()
+
+      if (!response.ok || data.error) {
+        setMessage({ type: 'error', text: data.error || 'Failed to trigger redeployment' })
+        return
+      }
+
+      if (data.job) {
+        setMessage({
+          type: 'success',
+          text: 'Redeployment triggered!',
+        })
+
+        const newCount = deployCount + 1
+        const timestamp = Date.now()
+        setDeployCount(newCount)
+        localStorage.setItem(
+          LOCAL_STORAGE_KEY,
+          JSON.stringify({
+            timestamp,
+            deploys: newCount,
+            lastJobId: data.job.id,
+          }),
+        )
+
+        // If this deploy hits the limit, block until midnight
+        if (newCount >= REDEPLOY_LIMIT) {
+          const remainingSecondsInDay = Math.ceil(
+            (new Date().setHours(24, 0, 0, 0) - Date.now()) / 1000,
+          )
+          setRemainingSeconds(remainingSecondsInDay)
+        } else {
+          setRemainingSeconds(COOLDOWN_MINUTES * 60)
+        }
+      }
+    } catch (err) {
+      console.error('Error triggering redeployment:', err)
+      setMessage({ type: 'error', text: 'Failed to trigger redeployment' })
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -115,13 +162,28 @@ export const RedeploymentButton = () => {
         <div>
           Deploys today: {deployCount} / {REDEPLOY_LIMIT}
         </div>
+        {message && (
+          <div
+            style={{
+              padding: '8px 12px',
+              borderRadius: '4px',
+              backgroundColor: message.type === 'success' ? '#d4edda' : '#f8d7da',
+              color: message.type === 'success' ? '#155724' : '#721c24',
+            }}
+          >
+            {message.text}
+          </div>
+        )}
         <button
           type="button"
-          disabled={!isEnabled}
+          disabled={!isEnabled || isLoading}
           onClick={onClick}
-          style={{ cursor: 'pointer', padding: '8px 16px' }}
+          style={{
+            cursor: isEnabled && !isLoading ? 'pointer' : 'not-allowed',
+            padding: '8px 16px',
+          }}
         >
-          Redeploy
+          {isLoading ? 'Deploying...' : 'Redeploy'}
         </button>
       </div>
     </>
