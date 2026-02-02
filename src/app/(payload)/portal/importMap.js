@@ -34,6 +34,8 @@ import { RowLabel as RowLabel_ec255a65fa6fa8d1faeb09cf35284224 } from '@/Header/
 import { ResetDefaults as ResetDefaults_5631ff4c228dd9fb59bf05a4b4037c08 } from '@/ThemeSettings/components/ResetDefaults'
 import { ColorPreview as ColorPreview_5720d74e97e8fcf58390365a656d25ae } from '@/ThemeSettings/components/ColorPreview'
 import { ButtonPreview as ButtonPreview_064f9d0db045c0324aefa2e11a2cbcf0 } from '@/ThemeSettings/components/ButtonPreview'
+import { RedeploymentButton as RedeploymentButton_c9e0c95743d999d53e30b41a75122807 } from '@/redploy/components/RedeploymentButton'
+import { EmptyButton as EmptyButton_224daa3d42178f5a3feab87d37478b20 } from '@/redploy/components/EmptyButton'
 import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
 
 export const importMap = {
@@ -73,5 +75,7 @@ export const importMap = {
   "@/ThemeSettings/components/ResetDefaults#ResetDefaults": ResetDefaults_5631ff4c228dd9fb59bf05a4b4037c08,
   "@/ThemeSettings/components/ColorPreview#ColorPreview": ColorPreview_5720d74e97e8fcf58390365a656d25ae,
   "@/ThemeSettings/components/ButtonPreview#ButtonPreview": ButtonPreview_064f9d0db045c0324aefa2e11a2cbcf0,
+  "@/redploy/components/RedeploymentButton#RedeploymentButton": RedeploymentButton_c9e0c95743d999d53e30b41a75122807,
+  "@/redploy/components/EmptyButton#EmptyButton": EmptyButton_224daa3d42178f5a3feab87d37478b20,
   "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24
 }
