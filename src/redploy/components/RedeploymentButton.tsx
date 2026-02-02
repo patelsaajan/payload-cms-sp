@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 
-const COOLDOWN_MINUTES = 0.5
+const COOLDOWN_MINUTES = 10
 const COOLDOWN_MS = COOLDOWN_MINUTES * 60 * 1000
 const LOCAL_STORAGE_KEY = 'redeploymentData'
 const REDEPLOY_LIMIT = 3
