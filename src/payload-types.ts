@@ -147,7 +147,7 @@ export interface Page {
   id: number;
   title: string;
   hero: {
-    type: 'none' | 'contentOnly' | 'splitContentImage' | 'imageOnly';
+    type: 'none' | 'contentOnly' | 'splitContentImage' | 'imageOnly' | 'bannerImage';
     backgroundColor?: ('primary' | 'secondary' | 'accent' | 'background') | null;
     textColor?: ('text' | 'primaryText' | 'secondaryText') | null;
     heading?: string | null;
