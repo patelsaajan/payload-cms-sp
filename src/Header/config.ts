@@ -1,6 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
 import { link } from '@/fields/link'
+import { populateLinkUrls } from './hooks/populateLinkUrls'
 import { revalidateHeader } from './hooks/revalidateHeader'
 
 export const Header: GlobalConfig = {
@@ -35,6 +36,7 @@ export const Header: GlobalConfig = {
     },
   ],
   hooks: {
+    beforeChange: [populateLinkUrls],
     afterChange: [revalidateHeader],
   },
 }

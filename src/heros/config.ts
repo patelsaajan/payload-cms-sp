@@ -34,6 +34,10 @@ export const hero: Field = {
           label: 'Image Only',
           value: 'imageOnly',
         },
+        {
+          label: 'Banner Image',
+          value: 'bannerImage',
+        },
       ],
       required: true,
     },
@@ -112,11 +116,7 @@ export const hero: Field = {
       label: 'Text',
       editor: lexicalEditor({
         features: ({ rootFeatures }) => {
-          return [
-            ...rootFeatures,
-            FixedToolbarFeature(),
-            InlineToolbarFeature(),
-          ]
+          return [...rootFeatures, FixedToolbarFeature(), InlineToolbarFeature()]
         },
       }),
       admin: {
@@ -136,7 +136,8 @@ export const hero: Field = {
       type: 'upload',
       label: 'Image',
       admin: {
-        condition: (_, { type } = {}) => ['splitContentImage', 'imageOnly'].includes(type),
+        condition: (_, { type } = {}) =>
+          ['splitContentImage', 'imageOnly', 'bannerImage'].includes(type),
       },
       relationTo: 'media',
       required: false,
