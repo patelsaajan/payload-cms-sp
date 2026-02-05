@@ -193,7 +193,7 @@ export interface Page {
     imagePositionDesktop?: ('left' | 'right') | null;
     imagePositionMobile?: ('top' | 'bottom') | null;
   };
-  layout: (ContentBlock | MediaBlock)[];
+  layout: (ContentBlock | MediaBlock | TimelineBlock)[];
   meta?: {
     title?: string | null;
     /**
@@ -362,6 +362,36 @@ export interface MediaBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'mediaBlock';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TimelineBlock".
+ */
+export interface TimelineBlock {
+  title?: string | null;
+  variant?: ('primary' | 'secondary' | 'accent') | null;
+  defaultValue?: number | null;
+  items?:
+    | {
+        /**
+         * Display date (e.g., "Jan 2024", "2023-2024")
+         */
+        date: string;
+        title: string;
+        /**
+         * Optional description for this timeline item
+         */
+        description?: string | null;
+        /**
+         * Optional icon (emoji or icon string)
+         */
+        icon?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'timeline';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -678,6 +708,7 @@ export interface PagesSelect<T extends boolean = true> {
     | {
         content?: T | ContentBlockSelect<T>;
         mediaBlock?: T | MediaBlockSelect<T>;
+        timeline?: T | TimelineBlockSelect<T>;
       };
   meta?:
     | T
@@ -726,6 +757,26 @@ export interface ContentBlockSelect<T extends boolean = true> {
  */
 export interface MediaBlockSelect<T extends boolean = true> {
   media?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TimelineBlock_select".
+ */
+export interface TimelineBlockSelect<T extends boolean = true> {
+  title?: T;
+  variant?: T;
+  defaultValue?: T;
+  items?:
+    | T
+    | {
+        date?: T;
+        title?: T;
+        description?: T;
+        icon?: T;
+        id?: T;
+      };
   id?: T;
   blockName?: T;
 }
