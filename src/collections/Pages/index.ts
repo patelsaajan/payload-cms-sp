@@ -10,6 +10,7 @@ import { populatePublishedAt } from '../../hooks/populatePublishedAt'
 // import { generatePreviewPath } from '../../utilities/generatePreviewPath'
 import { revalidateDelete, revalidatePage } from './hooks/revalidatePage'
 import { Timeline } from '@/blocks/Timeline/config'
+import { Testimonials } from '@/blocks/Testimonials/config'
 
 import {
   MetaDescriptionField,
@@ -70,7 +71,7 @@ export const Pages: CollectionConfig<'pages'> = {
             {
               name: 'layout',
               type: 'blocks',
-              blocks: [Content, MediaBlock, Timeline],
+              blocks: [Content, MediaBlock, Timeline, Testimonials],
               required: true,
               admin: {
                 initCollapsed: true,
