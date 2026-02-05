@@ -10,6 +10,7 @@ import {
 
 import { link } from '@/fields/link'
 import { ButtonBlock } from '../ButtonBlock/config'
+import { Timeline } from '../Timeline/config'
 
 const columnFields: Field[] = [
   {
@@ -51,7 +52,7 @@ const columnFields: Field[] = [
         return [
           ...filteredFeatures,
           HeadingFeature({ enabledHeadingSizes: ['h2', 'h3', 'h4'] }),
-          BlocksFeature({ blocks: [ButtonBlock] }),
+          BlocksFeature({ blocks: [ButtonBlock, Timeline] }),
           FixedToolbarFeature(),
           InlineToolbarFeature(),
         ]
