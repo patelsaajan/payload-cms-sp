@@ -24,6 +24,15 @@ export const Timeline: Block = {
       ],
     },
     {
+      name: 'orientation',
+      type: 'select',
+      label: 'Orientation',
+      options: [
+        { label: 'Vertical', value: 'vertical' },
+        { label: 'Horizontal', value: 'horizontal' },
+      ],
+    },
+    {
       name: 'defaultValue',
       type: 'number',
       label: 'Default Active Item',

@@ -370,6 +370,7 @@ export interface MediaBlock {
 export interface TimelineBlock {
   title?: string | null;
   variant?: ('primary' | 'secondary' | 'accent') | null;
+  orientation?: ('vertical' | 'horizontal') | null;
   defaultValue?: number | null;
   items?:
     | {
@@ -767,6 +768,7 @@ export interface MediaBlockSelect<T extends boolean = true> {
 export interface TimelineBlockSelect<T extends boolean = true> {
   title?: T;
   variant?: T;
+  orientation?: T;
   defaultValue?: T;
   items?:
     | T
