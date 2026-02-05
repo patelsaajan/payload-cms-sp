@@ -193,7 +193,7 @@ export interface Page {
     imagePositionDesktop?: ('left' | 'right') | null;
     imagePositionMobile?: ('top' | 'bottom') | null;
   };
-  layout: (ContentBlock | MediaBlock | TimelineBlock)[];
+  layout: (ContentBlock | MediaBlock | TimelineBlock | TestimonialsBlock)[];
   meta?: {
     title?: string | null;
     /**
@@ -393,6 +393,22 @@ export interface TimelineBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'timeline';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TestimonialsBlock".
+ */
+export interface TestimonialsBlock {
+  title?: string | null;
+  testimonials: {
+    by?: string | null;
+    date?: string | null;
+    quote: string;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'testimonials';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -710,6 +726,7 @@ export interface PagesSelect<T extends boolean = true> {
         content?: T | ContentBlockSelect<T>;
         mediaBlock?: T | MediaBlockSelect<T>;
         timeline?: T | TimelineBlockSelect<T>;
+        testimonials?: T | TestimonialsBlockSelect<T>;
       };
   meta?:
     | T
@@ -777,6 +794,23 @@ export interface TimelineBlockSelect<T extends boolean = true> {
         title?: T;
         description?: T;
         icon?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TestimonialsBlock_select".
+ */
+export interface TestimonialsBlockSelect<T extends boolean = true> {
+  title?: T;
+  testimonials?:
+    | T
+    | {
+        by?: T;
+        date?: T;
+        quote?: T;
         id?: T;
       };
   id?: T;
