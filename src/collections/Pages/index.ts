@@ -9,6 +9,7 @@ import { slugField } from 'payload'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
 // import { generatePreviewPath } from '../../utilities/generatePreviewPath'
 import { revalidateDelete, revalidatePage } from './hooks/revalidatePage'
+import { Timeline } from '@/blocks/Timeline/config'
 
 import {
   MetaDescriptionField,
@@ -17,7 +18,6 @@ import {
   OverviewField,
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
-import { Timeline } from '@/blocks/Timeline'
 
 export const Pages: CollectionConfig<'pages'> = {
   slug: 'pages',
