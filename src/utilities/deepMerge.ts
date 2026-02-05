@@ -12,6 +12,7 @@ export function isObject(item: unknown): item is object {
 
 /**
  * Deep merge two objects.
+ *
  * @param target
  * @param ...sources
  */
